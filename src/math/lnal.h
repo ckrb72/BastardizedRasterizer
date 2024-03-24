@@ -78,25 +78,31 @@ namespace lnal
 
 
         //Additional matrix functionality
+        friend void gen_perspective_proj(mat4& A, float fovx, float aspect_ratio, float near, float far);
+        friend void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far);
+        friend void lookat(mat4& A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up);
 
-        //Might not want to do this and mix naming conventions (snakecase everywhere else except here)
-        mat4 getTranspose();
-        mat4 getInverse();
+
+        float* data();
+
+        mat4 transpose();
+        mat4 inverse();
 
         void print();
 
     };
-
-    void gen_perspective_proj(mat4 A, float fovx, float aspect_ratio, float near, float far);
-    void gen_orthographic_proj(mat4 A, float left, float right, float bottom, float top, float near, float far);
 
     //Will need to implement these features but might want to make these methods of mat4 class instead of standalone fuctions
     void translate(mat4 A, vec3 vec);
     void scale(mat4 A, vec3 vec);
     void rotate(mat4 result, mat4 A, vec3 axis, double angle);
 
-    void lookat(mat4 A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up);
+    void gen_perspective_proj(mat4& A, float fovx, float aspect_ratio, float near, float far);
+    void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far);
+    void lookat(mat4& A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up);
+
     vec3 cross(vec3& a, vec3& b);
+    float dot(vec3& a, vec3& b);
 
     float radians(float degrees);
 

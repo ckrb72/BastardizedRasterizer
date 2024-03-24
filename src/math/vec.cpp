@@ -128,7 +128,7 @@ namespace lnal
     //Takes the cross products of a and b in the form AxB.
     //@param a lhs of cross product
     //@param b rhs of cross product
-    //@return vec3 result of AxB
+    //@return Result of AxB
     vec3 cross(vec3& a, vec3& b)
     {
         vec3 result;
@@ -136,6 +136,16 @@ namespace lnal
         result[1] = -((a[0] * b[2]) - (a[2] * b[0]));
         result[2] = (a[0] * b[1]) - (a[1] * b[0]);
         return result; 
+    }
+
+
+    //Calculates dot product of two vectors
+    //@param a first vector
+    //@param b second vector
+    //@return Calculated dot product
+    float dot(vec3& a, vec3& b)
+    {
+        return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
     }
 
 }

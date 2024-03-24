@@ -78,10 +78,20 @@
         
         Keep this in mind for all multiplication as messing up the order will give the wrong answer since matrix multiplication isn't commutative.
 
+
+    References for Further Learning - 
+    
+        Perspective Projection Matrix Derivation - https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/opengl-perspective-projection-matrix.html
+        Orthographic Projection Matrix Derivation - https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/orthographic-projection-matrix.html
+        View / Lookat Matrix Derivation - https://www.songho.ca/opengl/gl_camera.html
+        Rotation Matrix Derivation - https://www.songho.ca/opengl/gl_rotate.html
+
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
 
 #include "lnal.h"
 #include <iostream>
+#include <math.h>
 
 namespace lnal
 {
@@ -185,10 +195,30 @@ namespace lnal
         return *this;
     }
 
+    //Can optimize this by transposing matrix A first (use cache correctly)
     mat4 mat4::operator*(const mat4& rhs)
     {
-        
+        mat4 result;
+
+        for(int c = 0; c < 4; c++)
+        {
+            for(int r = 0; r < 4; r++)
+            {
+                float sum = 0.0;
+
+                //Dot product of row of A (looks like column because of array layout)
+                //and column of B (looks like row because of array layout)
+                for(int i = 0; i < 4; i++)
+                {
+                    sum += m_data[i][r] * rhs.m_data[c][i];
+                }
+                result.m_data[c][r] = sum;
+            }
+        }
+
+        return result;
     }
+
 
     void mat4::print()
     {
@@ -196,6 +226,11 @@ namespace lnal
         {
             std::cout << "| " <<  m_data[i][0] << ", " << m_data[i][1] << ", " << m_data[i][2] << ", " << m_data[i][3] << " |" <<  std::endl;
         }
+    }
+
+    float* mat4::data()
+    {
+        return &m_data[0][0];
     }
 
 /* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,9 +243,32 @@ namespace lnal
     //@param aspect_ratio aspect ratio of the projection (usually 16:9 [aka 1920 / 1080])
     //@param near near clipping plane of the projection
     //@param far far clipping plane of the projection
-    void gen_perspective_proj(mat4 A, float fovx, float aspect_ratio, float near, float far) 
+    void gen_perspective_proj(mat4& A, float fovx, float aspect_ratio, float near, float far) 
     {
+        float right = tan(fovx / 2) * near;
+        float left = -right;
+        float top = right / aspect_ratio;
+        float bottom = -top;
 
+        A.m_data[0][0] = (2 * near) / (right - left);
+        A.m_data[0][1] = 0;
+        A.m_data[0][2] = 0;
+        A.m_data[0][3] = 0;
+
+        A.m_data[1][0] = 0;
+        A.m_data[1][1] = (2 * near) / (top - bottom);
+        A.m_data[1][2] = 0;
+        A.m_data[1][3] = 0;
+
+        A.m_data[2][0] = (right + left) / (right - left);
+        A.m_data[2][1] = (top + bottom) / (top - bottom);
+        A.m_data[2][2] = -((far + near) / (far - near));
+        A.m_data[2][3] = -1;
+
+        A.m_data[3][0] = 0;
+        A.m_data[3][1] = 0;
+        A.m_data[3][2] = -((2 * far * near) / (far - near));
+        A.m_data[3][3] = 0;
     }
 
     //Creates an orthographic projection matrix for rendering
@@ -221,7 +279,7 @@ namespace lnal
     //@param top top clipping plane
     //@param near near clipping plane
     //@param far far clipping plane
-    void gen_orthographic_proj(mat4 A, float left, float right, float bottom, float top, float near, float far)
+    void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far)
     {
 
     }
@@ -230,13 +288,12 @@ namespace lnal
     //@param A the matrix to place the final result in
     //@param cam_pos position in world space of the camera
     //@param up position in world space of the up vector
-    void lookat(mat4 A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up)
+    void lookat(mat4& A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up)
     {
         vec3 forward = cam_pos - cam_lookat;
         forward.normalize();
 
         temp_up.normalize();
-        
         vec3 right = cross(temp_up, forward);
         right.normalize();
 
@@ -244,6 +301,26 @@ namespace lnal
         up.normalize();
 
 
-        //Make view matrix then return it
+
+        //Actual view matrix
+        A.m_data[0][0] = right[0];
+        A.m_data[0][1] = up[0];
+        A.m_data[0][2] = forward[0];
+        A.m_data[0][3] = 0;
+
+        A.m_data[1][0] = right[1];
+        A.m_data[1][1] = up[1];
+        A.m_data[1][2] = forward[1];
+        A.m_data[1][3] = 0;
+
+        A.m_data[2][0] = right[2];
+        A.m_data[2][1] = up[2];
+        A.m_data[2][2] = forward[2];
+        A.m_data[2][3] = 0;
+
+        A.m_data[3][0] = -dot(right, cam_pos);
+        A.m_data[3][1] = -dot(up, cam_pos);
+        A.m_data[3][2] = -dot(forward, cam_pos);
+        A.m_data[3][3] = 1;
     }
 }
