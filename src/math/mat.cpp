@@ -196,6 +196,7 @@ namespace lnal
     }
 
     //Can optimize this by transposing matrix A first (use cache correctly)
+    //Matrix multiplication of B * A  ( as function compositions: B(A(X))  )
     mat4 mat4::operator*(const mat4& rhs)
     {
         mat4 result;
@@ -206,15 +207,21 @@ namespace lnal
             {
                 float sum = 0.0;
 
-                //Dot product of row of A (looks like column because of array layout)
-                //and column of B (looks like row because of array layout)
+                //Dot product of row of A (looks like column because of mem layout)
+                //and column of B (looks like row becuase of mem layout)
+                //Allows us to do B * A with the column-major matrix layouts
+                //(technically we are doing A * B, which is what we want because the matrices are
+                //"transposed" [column-major order]). Laying the mult out like this allows us
+                //to write B * A, which how multiplications are normally written.
                 for(int i = 0; i < 4; i++)
                 {
+                              //B               //A
                     sum += m_data[i][r] * rhs.m_data[c][i];
                 }
                 result.m_data[c][r] = sum;
             }
         }
+
 
         return result;
     }
@@ -222,10 +229,12 @@ namespace lnal
 
     void mat4::print()
     {
+        std::cout << std::endl;
         for(int i = 0; i < 4; i++)
         {
             std::cout << "| " <<  m_data[i][0] << ", " << m_data[i][1] << ", " << m_data[i][2] << ", " << m_data[i][3] << " |" <<  std::endl;
         }
+        std::cout << std::endl;
     }
 
     float* mat4::data()

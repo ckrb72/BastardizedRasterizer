@@ -4,9 +4,27 @@
 
 int main()
 {
-    lnal::mat4 m;
-    lnal::gen_perspective_proj(m, PI / 2, (1920.0 / 1080.0), 0.1, 10.0);
+    lnal::mat4 A(1);
 
-    m.print();
+    float* a_data = A.data();
+    for(int i = 0; i < 16; i++)
+    {
+        a_data[i] = 15 - i;
+    }
 
+    A.print();
+
+    lnal::mat4 B;
+
+    float* data = B.data();
+
+    for(int i = 0; i < 16; i++)
+    {
+        data[i] = i;
+    }
+
+    B.print();
+
+    lnal::mat4 C = A * B;
+    C.print();
 }
