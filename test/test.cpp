@@ -4,27 +4,13 @@
 
 int main()
 {
+
     lnal::mat4 A(1);
 
-    float* a_data = A.data();
-    for(int i = 0; i < 16; i++)
-    {
-        a_data[i] = 15 - i;
-    }
+    lnal::translate_relative(A, lnal::vec3(1, 2, 1));
 
+    lnal::translate_relative(A, lnal::vec3(1, 1, 1));
+
+    lnal::scale(A, lnal::vec3(4, 3, 2));
     A.print();
-
-    lnal::mat4 B;
-
-    float* data = B.data();
-
-    for(int i = 0; i < 16; i++)
-    {
-        data[i] = i;
-    }
-
-    B.print();
-
-    lnal::mat4 C = A * B;
-    C.print();
 }

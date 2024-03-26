@@ -107,6 +107,11 @@ namespace lnal
     {
         return m_data[index];
     }
+
+    const float& vec3::operator[](int index) const
+    {
+        return m_data[index];
+    }
     
 
     //Friend function definitions
@@ -129,7 +134,7 @@ namespace lnal
     //@param a lhs of cross product
     //@param b rhs of cross product
     //@return Result of AxB
-    vec3 cross(vec3& a, vec3& b)
+    vec3 cross(const vec3& a, const vec3& b)
     {
         vec3 result;
         result[0] = (a[1] * b[2]) - (a[2] * b[1]);
@@ -143,7 +148,7 @@ namespace lnal
     //@param a first vector
     //@param b second vector
     //@return Calculated dot product
-    float dot(vec3& a, vec3& b)
+    float dot(const vec3& a, const vec3& b)
     {
         return (a[0] * b[0]) + (a[1] * b[1]) + (a[2] * b[2]);
     }

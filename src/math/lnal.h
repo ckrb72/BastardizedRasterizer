@@ -38,6 +38,9 @@ namespace lnal
 
         float& operator[](int index);
 
+        //Const version of [] overload for when we pass in const vecs to functions
+        const float& operator[](int index) const;
+
 
         //Need to make these friends so we can have on the scalar on both sides of the operator
         friend vec3 operator*(float scalar, const vec3& vec);
@@ -82,6 +85,11 @@ namespace lnal
         friend void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far);
         friend void lookat(mat4& A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up);
 
+        friend void translate_relative(mat4& A, const vec3& vec);
+        friend void translate_absolute(mat4& A, const vec3& vec);
+        friend void scale(mat4& A, const vec3& vec);
+        friend void rotate(mat4& A, const vec3& axis, float angle);
+
 
         float* data();
 
@@ -93,16 +101,17 @@ namespace lnal
     };
 
     //Will need to implement these features but might want to make these methods of mat4 class instead of standalone fuctions
-    void translate(mat4 A, vec3 vec);
-    void scale(mat4 A, vec3 vec);
-    void rotate(mat4 result, mat4 A, vec3 axis, double angle);
+    void translate_relative(mat4& A, const vec3& vec);
+    void translate_absolute(mat4& A, const vec3& vec);
+    void scale(mat4& A, const vec3& vec);
+    void rotate(mat4& A, const vec3& axis, float angle);
 
     void gen_perspective_proj(mat4& A, float fovx, float aspect_ratio, float near, float far);
     void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far);
     void lookat(mat4& A, vec3 cam_pos, vec3 cam_lookat, vec3 temp_up);
 
-    vec3 cross(vec3& a, vec3& b);
-    float dot(vec3& a, vec3& b);
+    vec3 cross(const vec3& a, const vec3& b);
+    float dot(const vec3& a, const vec3& b);
 
     float radians(float degrees);
 

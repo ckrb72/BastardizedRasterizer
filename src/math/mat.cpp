@@ -290,7 +290,25 @@ namespace lnal
     //@param far far clipping plane
     void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far)
     {
+       /* A.m_data[0][0] = 
+        A.m_data[0][1] = 
+        A.m_data[0][2] = 
+        A.m_data[0][3] = 
 
+        A.m_data[1][0] = 
+        A.m_data[1][1] = 
+        A.m_data[1][2] = 
+        A.m_data[1][3] = 
+
+        A.m_data[2][0] = 
+        A.m_data[2][1] = 
+        A.m_data[2][2] = 
+        A.m_data[2][3] = 
+
+        A.m_data[3][0] = 
+        A.m_data[3][1] = 
+        A.m_data[3][2] = 
+        A.m_data[3][3] = */
     }
 
     //Generates the view matrix given a specified orientation
@@ -331,5 +349,51 @@ namespace lnal
         A.m_data[3][1] = -dot(up, cam_pos);
         A.m_data[3][2] = -dot(forward, cam_pos);
         A.m_data[3][3] = 1;
+    }
+
+    //Translates matrix A along vector vec relative to current position
+    //For example, if current position is (1, 1, 1) and you input vector
+    // (2, 2, 2), the new position will be (3, 3, 3)
+    //@param A matrix to translate
+    //@param vec vector to translate along
+    void translate_relative(mat4& A, const vec3& vec)
+    {
+        A.m_data[3][0] += vec[0];
+        A.m_data[3][1] += vec[1];
+        A.m_data[3][2] += vec[2];
+    }
+
+    //Translates matrix A to position described in vec
+    //For example, if vec is (1, 1, 1), no matter what the
+    //current position is, the final transform will be (1, 1, 1)
+    //@param A matrix to translate
+    //@param vec position to translate to
+    void translate_absolute(mat4& A, const vec3& vec)
+    {
+        A.m_data[3][0] = vec[0];
+        A.m_data[3][1] = vec[1];
+        A.m_data[3][2] = vec[2];
+    }
+
+    //Scales matrix A in relation to the components of vec
+    // For example,
+    //      passing in (0.5, 1, 2) would scale x by 0.5,
+    //      y by 1, and z by 2
+    //@param A matrix to scale
+    //@param vec holds components to scale against
+    void scale(mat4& A, const vec3& vec)
+    {
+        A.m_data[0][0] *= vec[0];
+        A.m_data[1][1] *= vec[1];
+        A.m_data[2][2] *= vec[2];
+    }
+
+    //Rotates matrix A specified radians about arbitrary axis
+    //@param A matrix to rotate
+    //@param axis arbitrary axis to rotate around
+    //@param angle angle to rotate in radians
+    void rotate(mat4& A, const vec3& axis, float angle)
+    {
+
     }
 }
