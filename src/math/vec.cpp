@@ -57,9 +57,9 @@ namespace lnal
         return vec3(m_data[0] + rhs.m_data[0], m_data[1] + rhs.m_data[1], m_data[2] + rhs.m_data[2]);
     }
 
-    vec3 vec3::operator*(const vec3& rhs)
+    vec3 vec3::operator*(const float scalar)
     {
-        return vec3(m_data[0] * rhs.m_data[0], m_data[1] * rhs.m_data[1], m_data[2] * rhs.m_data[2]);
+        return vec3(m_data[0] * scalar, m_data[1] * scalar, m_data[2] * scalar);
     }
 
     vec3 vec3::operator-(const vec3& rhs)
@@ -121,10 +121,10 @@ namespace lnal
         return vec3(scalar * vec.m_data[0], scalar * vec.m_data[1], scalar * vec.m_data[2]);
     }
 
-    vec3 operator*(const vec3& vec, float scalar)
+    /*vec3 operator*(const vec3& vec, float scalar)
     {
         return vec3(vec.m_data[0] * scalar, vec.m_data[1] * scalar, vec.m_data[2] * scalar);
-    }
+    }*/
 
 /* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     Other Vector Function Definitions - 

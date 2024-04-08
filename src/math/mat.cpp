@@ -127,7 +127,7 @@ namespace lnal
 
     mat4 mat4::operator+(const mat4& rhs)
     {
-        mat4 result{};
+        mat4 result;
 
         for(int i = 0; i < 4; i++)
         {
@@ -142,7 +142,7 @@ namespace lnal
 
     mat4 mat4::operator-(const mat4& rhs)
     {
-        mat4 result{};
+        mat4 result;
         for(int i = 0; i < 4; i++)
         {
             for(int j = 0; j < 4; j++)
@@ -156,7 +156,7 @@ namespace lnal
 
     mat4 operator*(float scalar, const mat4& rhs)
     {
-        mat4 result{};
+        mat4 result;
 
         for(int i = 0; i < 4; i++)
         {

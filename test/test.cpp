@@ -5,6 +5,12 @@
 int main()
 {
 
+    lnal::vec3 a(1, 1, 1);
+
+    lnal::vec3 b = a * 1.5;
+
+    b.print();
+
     lnal::mat4 A(1);
 
     lnal::translate_relative(A, lnal::vec3(1, 2, 1));

@@ -27,7 +27,7 @@ namespace lnal
             is interpreted as rhs if we are adding two vectors.
         */
         vec3 operator+(const vec3& rhs);
-        vec3 operator*(const vec3& rhs);
+        vec3 operator*(const float scalar);
         vec3 operator-(const vec3& rhs);
         
 
@@ -44,7 +44,7 @@ namespace lnal
 
         //Need to make these friends so we can have on the scalar on both sides of the operator
         friend vec3 operator*(float scalar, const vec3& vec);
-        friend vec3 operator*(const vec3& vec, float scalar);
+        //friend vec3 operator*(const vec3& vec, float scalar);
 
         //want to implement [] operator
         
