@@ -1,0 +1,1 @@
+g++ src/api/*.cpp src/math/*.cpp src/glad.c test/*.cpp -I ./dependencies/include -L ./dependencies/lib/sdllib -lmingw32 -lSDL2main -lSDL2 -o main

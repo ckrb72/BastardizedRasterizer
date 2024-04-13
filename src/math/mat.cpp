@@ -394,6 +394,23 @@ namespace lnal
     //@param angle angle to rotate in radians
     void rotate(mat4& A, const vec3& axis, float angle)
     {
+            /*axis.normalize();
 
+
+            float c = cos(angle);
+            float s = sin(angle);
+
+            float x = axis[0];
+            float y = axis[1];
+            float z = axis[2];
+
+            //Don't ask...
+            mat4 rotation = 
+            {
+                {((1 - c) * (x * x)) + c, ((1 - c) * (x * y)) + (s * z), ((1 - c) * (x * z)) - (s * y), 0},
+                {((1 - c) * (x * y)) - (s * z), ((1 - c) * (y * y)) + c, ((1 - c) * (y * z)) + (s * x), 0},
+                {((1 - c) * (x * z)) + (s * y), ((1 - c) * (y * z)) - (s * x), ((1 - c) * (z * z)) + c, 0},
+                {0, 0, 0, 1}
+            };*/
     }
 }

@@ -1,22 +1,90 @@
+#include "../src/api/window.h"
+
 #include <iostream>
 #include "../src/math/lnal.h"
 #include <math.h>
 
-int main()
+
+//Callback pointers
+static void (*input_callback)(int, int) = nullptr;
+static void (*mouse_callback)(int, int) = nullptr;
+
+//Callback defines
+#define CALLBACK_INFO_NONE 0
+#define CALLBACK_INFO_INPUT 1
+#define CALLBACK_INFO_MOUSE 2
+
+//Callback registration function
+static void register_callback(void (*callback)(int, int), uint32_t info);
+
+//Users would never see these functions (just for testing purposes)
+//Would be triggered when an event happened (could put this in the switch case stuff)
+static void input_event(int a);
+static void mouse_event(int a);
+
+//User defined callback functions
+static void call(int a, int b)
+{
+    std::cout << a + b << std::endl;
+}
+
+static void test(int a, int b)
+{
+    std::cout << "Testing..." << std::endl;
+}
+
+
+int main(int argv, char** args)
+{
+    //Actually register the callback
+    register_callback(call, CALLBACK_INFO_INPUT | CALLBACK_INFO_MOUSE);
+
+    //This overrides the last registered callback
+    //register_callback(test, 0);
+
+    //Trigger the callback with an event
+    input_event(100);
+
+    mouse_event(100);
+
+    window win("Test", 1920, 1080);
+
+    while(!win.should_close())
+    {
+        //Need to figure out how to poll the events
+        win.poll_events();
+
+        win.swap_buffer();
+    }
+}
+
+
+//Need to figure out bitwise operators to use with flags
+void register_callback(void (*call)(int, int), uint32_t info)
 {
 
-    lnal::vec3 a(1, 1, 1);
+    if(CALLBACK_INFO_INPUT & info)
+        input_callback = call;
 
-    lnal::vec3 b = a * 1.5;
+    if(CALLBACK_INFO_MOUSE & info)
+        mouse_callback = call;
+}
 
-    b.print();
 
-    lnal::mat4 A(1);
+void input_event(int a)
+{
+    std::cout << "In input event" << std::endl;
+    if(input_callback == nullptr)
+        return;
 
-    lnal::translate_relative(A, lnal::vec3(1, 2, 1));
+    input_callback(a, 10);
+}
 
-    lnal::translate_relative(A, lnal::vec3(1, 1, 1));
-
-    lnal::scale(A, lnal::vec3(4, 3, 2));
-    A.print();
+void mouse_event(int a)
+{
+    std::cout << "In mouse event" << std::endl;
+    if(mouse_callback == nullptr)
+        return;
+    
+    mouse_callback(100, 10);
 }
