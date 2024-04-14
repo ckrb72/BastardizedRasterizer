@@ -32,6 +32,10 @@ public:
     bool should_close();
     void swap_buffer();
 
+    //Don't want this in here. Only keeping this for the test.cpp demo
     void poll_events();
+
+    
+    void clear();
 
 };

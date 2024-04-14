@@ -2,10 +2,10 @@
 
 #include <iostream>
 #include "../src/math/lnal.h"
-#include <math.h>
 
 
 //Callback pointers
+//Could probably store all of the callbacks in an array to allow for more cache coherency (if one callback is called in a frame, it likely others will be too)
 static void (*input_callback)(int, int) = nullptr;
 static void (*mouse_callback)(int, int) = nullptr;
 
@@ -47,12 +47,24 @@ int main(int argv, char** args)
 
     mouse_event(100);
 
+    //Will want to wrap this in a engine object or something like that.
+    //Renderer object will contain all rendering code
     window win("Test", 1920, 1080);
 
     while(!win.should_close())
     {
+
+        //Engine loop:
+        //handle_input()
+        //render()
+        //extra stuff for later
+
         //Need to figure out how to poll the events
+        //This will probably be window specific events
+        //Might want to decouple this from window class and make it it's own thing so we can handle input some other way.
         win.poll_events();
+
+        win.clear();
 
         win.swap_buffer();
     }

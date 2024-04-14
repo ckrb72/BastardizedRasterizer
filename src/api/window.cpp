@@ -53,7 +53,7 @@ void window::swap_buffer()
     SDL_GL_SwapWindow(m_win_handle);
 }
 
-//Will update this later to allow for more events
+//Will get rid of this later
 void window::poll_events()
 {
     SDL_Event event;
@@ -63,6 +63,18 @@ void window::poll_events()
         {
             case SDL_QUIT:
                 m_close = true;
+                break;
+            //case SDL_MOUSEMOTION:
+            //     mouse_motion_callback(/*stuff to pass to mouse motion callback*/)
+
+            default:
+                break;
         }
     }
+}
+
+void window::clear()
+{
+    glClearColor(0.3, 0.3, 0.3, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
