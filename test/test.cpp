@@ -6,12 +6,12 @@
 
 //Callback pointers
 //Could probably store all of the callbacks in an array to allow for more cache coherency (if one callback is called in a frame, it likely others will be too)
-static void (*input_callback)(int, int) = nullptr;
+static void (*keyboard_callback)(int, int) = nullptr;
 static void (*mouse_callback)(int, int) = nullptr;
 
 //Callback defines
 #define CALLBACK_INFO_NONE 0
-#define CALLBACK_INFO_INPUT 1
+#define CALLBACK_INFO_KEYBOARD 1
 #define CALLBACK_INFO_MOUSE 2
 
 //Callback registration function
@@ -37,7 +37,7 @@ static void test(int a, int b)
 int main(int argv, char** args)
 {
     //Actually register the callback
-    register_callback(call, CALLBACK_INFO_INPUT | CALLBACK_INFO_MOUSE);
+    register_callback(call, CALLBACK_INFO_KEYBOARD | CALLBACK_INFO_MOUSE);
 
     //This overrides the last registered callback
     //register_callback(test, 0);
@@ -75,8 +75,8 @@ int main(int argv, char** args)
 void register_callback(void (*call)(int, int), uint32_t info)
 {
 
-    if(CALLBACK_INFO_INPUT & info)
-        input_callback = call;
+    if(CALLBACK_INFO_KEYBOARD & info)
+        keyboard_callback = call;
 
     if(CALLBACK_INFO_MOUSE & info)
         mouse_callback = call;
@@ -86,10 +86,10 @@ void register_callback(void (*call)(int, int), uint32_t info)
 void input_event(int a)
 {
     std::cout << "In input event" << std::endl;
-    if(input_callback == nullptr)
+    if(keyboard_callback == nullptr)
         return;
 
-    input_callback(a, 10);
+    keyboard_callback(a, 10);
 }
 
 void mouse_event(int a)

@@ -11,8 +11,11 @@ Can add #defines later for what library we want to use:
 i.e. #define WINDOW_GLFW_API or #define WINDOW_SDL_API
 */
 //Might want to put this include somewhere else
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#else
 #include <glad/glad.h>
-
+#endif 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <iostream>

@@ -1,5 +1,10 @@
 #include "window.h"
+
+#ifdef __APPLE__
+#include <OpenGL/gl3.h>
+#else
 #include <glad/glad.h>
+#endif
 
 window::window(const std::string& title, int width, int height)
 {

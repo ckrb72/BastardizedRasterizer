@@ -199,7 +199,7 @@ namespace lnal
     //Matrix multiplication of B * A  ( as function compositions: B(A(X))  )
     mat4 mat4::operator*(const mat4& rhs)
     {
-        mat4 result;
+        mat4 result{};
 
         for(int c = 0; c < 4; c++)
         {

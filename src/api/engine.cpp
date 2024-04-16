@@ -1,6 +1,6 @@
 #include "engine.h"
 
-engine::engine(const std::string& title, size_t width, size_t height)
+engine::engine(const std::string& title, size_t width, size_t height) 
 :m_window(title, width, height)
 {
 
