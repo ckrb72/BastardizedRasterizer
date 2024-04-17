@@ -9,11 +9,7 @@
 #include <iostream>
 
 namespace lnal
-{
-
-/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    Vector Class Implementation - 
-*/   
+{  
     //Initializes to zero vector <0, 0, 0>
     vec3::vec3()
     {
@@ -33,24 +29,9 @@ namespace lnal
         m_data[2] = z;
     }
 
-    //Normalizes vector
-    void vec3::normalize()
-    {
-        float magnitude = sqrt((m_data[0] * m_data[0]) + (m_data[1] * m_data[1]) + (m_data[2] * m_data[2]));
-
-        m_data[0] /= magnitude;
-        m_data[1] /= magnitude;
-        m_data[2] /= magnitude;
-    }
-
-    //Prints out vector in nice format for easy debugging
-    void vec3::print()
-    {
-        std::cout << "< " << m_data[0] << ", " << m_data[1] << ", " << m_data[2] << " >" << std::endl;
-    }
-
-
-    //Operator overload definitions
+/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Operator Overload Definitions - 
+*/  
 
     vec3 vec3::operator+(const vec3& rhs)
     {
@@ -128,6 +109,43 @@ namespace lnal
 
 /* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     Other Vector Function Definitions - 
+*/  
+
+    //Returns the length of the vector
+    float vec3::len()
+    {
+        return sqrt((m_data[0] * m_data[0]) + (m_data[1] * m_data[1]) + (m_data[2] * m_data[2]));
+    }
+
+    //Returns the length of the vector squared
+    float vec3::len_sqr()
+    {
+        return (m_data[0] * m_data[0]) + (m_data[1] * m_data[1]) + (m_data[2] * m_data[2]);
+    }
+
+    //Normalizes vector
+    void vec3::normalize()
+    {
+        float magnitude = sqrt((m_data[0] * m_data[0]) + (m_data[1] * m_data[1]) + (m_data[2] * m_data[2]));
+
+        m_data[0] /= magnitude;
+        m_data[1] /= magnitude;
+        m_data[2] /= magnitude;
+    }
+
+    //Prints out vector in nice format
+    void vec3::print() const
+    {
+        std::cout << "< " << m_data[0] << ", " << m_data[1] << ", " << m_data[2] << " >" << std::endl;
+    }
+
+    const float* vec3::data() const
+    {
+        return &m_data[0];
+    }
+
+/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Non-Member Function Definitions - 
 */  
 
     //Takes the cross products of a and b in the form AxB.

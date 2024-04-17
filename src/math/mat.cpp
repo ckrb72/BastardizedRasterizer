@@ -96,17 +96,6 @@
 namespace lnal
 {
 
-    //Converts degrees to radians
-    //@param degrees value to convert
-    float radians(float degrees)
-    {
-        return (degrees * PI) / 180.0;   
-    }
-
-/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    Matrix class implementation - 
-*/    
-
     //Sets Diagonal of Matrix to a.
     //Rest of matrix guaranteed to be 0
     //@param a Value to set diagonal to
@@ -124,7 +113,9 @@ namespace lnal
     }
 
 
-
+/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Overloaded Operator Definitions - 
+*/   
     mat4 mat4::operator+(const mat4& rhs)
     {
         mat4 result;
@@ -226,7 +217,11 @@ namespace lnal
         return result;
     }
 
+/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    Other Matrix Function Definitions - 
+*/   
 
+    //Prints the matrix in a nice format
     void mat4::print()
     {
         std::cout << std::endl;
@@ -237,14 +232,11 @@ namespace lnal
         std::cout << std::endl;
     }
 
+    //Returns a pointer to the first element of the internal array
     float* mat4::data()
     {
         return &m_data[0][0];
     }
-
-/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    Other Matrix Function Definitions - 
-*/   
 
     //Creates a perspective projection matrix for rendering.
     //@param A the matrix to place the final result in

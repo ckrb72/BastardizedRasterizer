@@ -50,9 +50,19 @@ namespace lnal
         
         //Additional vector functionality
 
+        //Normalizes vector
         void normalize();
 
-        void print();
+        //Prints out vector in nice format
+        void print() const;
+
+        //Returns the length of the vector
+        float len();
+
+        //Returns the length of the vector squared
+        float len_sqr();
+
+        const float* data() const;
 
     };
 
@@ -90,12 +100,13 @@ namespace lnal
         friend void scale(mat4& A, const vec3& vec);
         friend void rotate(mat4& A, const vec3& axis, float angle);
 
-
+        //Returns a pointer to the first element of the internal array
         float* data();
 
         mat4 transpose();
         mat4 inverse();
 
+        //Prints the matrix in a nice format
         void print();
 
     };
@@ -113,6 +124,8 @@ namespace lnal
     vec3 cross(const vec3& a, const vec3& b);
     float dot(const vec3& a, const vec3& b);
 
-    float radians(float degrees);
+    //Converts degrees to radians
+    //@param degrees value to convert
+    inline float radians(float degrees) { return (degrees * PI) / 180.0; }
 
 }
