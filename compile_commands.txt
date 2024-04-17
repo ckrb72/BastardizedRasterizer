@@ -1,0 +1,5 @@
+Windows:
+g++ src/api/*.cpp src/math/*.cpp src/glad.c test/*.cpp -I ./dependencies/include -L ./dependencies/lib/sdllib -lmingw32 -lSDL2main -lSDL2 -std=c++2a -o main
+
+Mac:
+g++ src/api/*.cpp src/math/*.cpp test/engine_test.cpp -I /Library/Frameworks/SDL2.framework/Version/A/Headers -F /Library/Frameworks -framework SDL2 -framework OpenGL -std=c++2a -Wno-deprecated -o main
