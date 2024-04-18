@@ -380,29 +380,52 @@ namespace lnal
         A.m_data[2][2] *= vec[2];
     }
 
-    //Rotates matrix A specified radians about arbitrary axis
+    //Encodes a rotation of specified radians about the axis specified into A
     //@param A matrix to rotate
     //@param axis arbitrary axis to rotate around
     //@param angle angle to rotate in radians
-    void rotate(mat4& A, const vec3& axis, float angle)
+    void rotation_matrix(mat4& A, vec3& axis, float angle)
     {
-            /*axis.normalize();
 
+        axis.normalize();
 
-            float c = cos(angle);
-            float s = sin(angle);
+        float c = cos(angle);
+        float s = sin(angle);
 
-            float x = axis[0];
-            float y = axis[1];
-            float z = axis[2];
+        float x = axis[0];
+        float y = axis[1];
+        float z = axis[2];
 
-            //Don't ask...
-            mat4 rotation = 
-            {
-                {((1 - c) * (x * x)) + c, ((1 - c) * (x * y)) + (s * z), ((1 - c) * (x * z)) - (s * y), 0},
-                {((1 - c) * (x * y)) - (s * z), ((1 - c) * (y * y)) + c, ((1 - c) * (y * z)) + (s * x), 0},
-                {((1 - c) * (x * z)) + (s * y), ((1 - c) * (y * z)) - (s * x), ((1 - c) * (z * z)) + c, 0},
-                {0, 0, 0, 1}
-            };*/
+        A.m_data[0][0] = ((1 - c) * (x * x)) + c;
+        A.m_data[0][1] = ((1 - c) * (x * y)) + (s * z);
+        A.m_data[0][2] = ((1 - c) * (x * z)) - (s * y);
+        A.m_data[0][3] = 0;
+
+        A.m_data[1][0] = ((1 - c) * (x * y)) - (s * z);
+        A.m_data[1][1] = ((1 - c) * (y * y)) + c;
+        A.m_data[1][2] = ((1 - c) * (y * z)) + (s * x);
+        A.m_data[1][3] = 0;
+
+        A.m_data[2][0] = ((1 - c) * (x * z)) + (s * y);
+        A.m_data[2][1] = ((1 - c) * (y * z)) - (s * x);
+        A.m_data[2][2] = ((1 - c) * (z * z)) + c;
+        A.m_data[2][3] = 0;
+
+        A.m_data[3][0] = 0;
+        A.m_data[3][1] = 0;
+        A.m_data[3][2] = 0;
+        A.m_data[3][3] = 1;
+    }
+
+    //Rotates matrix A around the given axis by the specified angle in radians
+    //@param A matrix to rotate
+    //@param axis arbitrary axis to rotate around
+    //@param angle angle to rotate in radians
+    void rotate(mat4& A, vec3& axis, float angle)
+    {
+        lnal::mat4 rotation;
+        rotation_matrix(rotation, axis, angle);
+
+        A = rotation * A;
     }
 }

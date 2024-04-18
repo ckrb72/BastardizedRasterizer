@@ -11,6 +11,7 @@
 
 #include "../src/math/lnal.h"
 #include <cassert>
+#include <cmath>
 
 const char* vertex_shader_source = "#version 330 core\n"
 "layout(location = 0) in vec3 a_pos;\n"
@@ -18,7 +19,7 @@ const char* vertex_shader_source = "#version 330 core\n"
 "uniform mat4 model;\n"
 "void main()\n"
 "{\n"
-"gl_Position = projection * vec4(a_pos, 1.0);\n"
+"gl_Position = projection * model * vec4(a_pos, 1.0);\n"
 "}\n\0";
 
 const char* fragment_shader_source = "#version 330 core\n"
@@ -29,7 +30,9 @@ const char* fragment_shader_source = "#version 330 core\n"
 "}\n\0";
 
 /*
-- Texture
+- 3D
+- Rotations
+- Textures
 */
 
 int main()
@@ -152,13 +155,16 @@ int main()
 
     lnal::gen_perspective_proj(projection, PI / 2, (float)(1920.0f/1080.0f), 0.1, 10.0);
 
-    projection.print();
-
     glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, projection.data());
 
     //End of OpenGL stuff
 
     bool quit = false;
+    lnal::mat4 model(1.0);
+
+    lnal::mat4 rotation;
+    lnal::vec3 axis(0.0, 0.0, 1.0);
+    lnal::rotation_matrix(rotation, axis, PI / 1000);
 
     //Main Loop of engine
     while(!quit)
@@ -175,6 +181,10 @@ int main()
                     break;
             }
         }
+
+        model = rotation * model;
+
+        glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, model.data());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.3, 0.3, 0.3, 1.0);

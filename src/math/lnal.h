@@ -98,7 +98,7 @@ namespace lnal
         friend void translate_relative(mat4& A, const vec3& vec);
         friend void translate_absolute(mat4& A, const vec3& vec);
         friend void scale(mat4& A, const vec3& vec);
-        friend void rotate(mat4& A, const vec3& axis, float angle);
+        friend void rotation_matrix(mat4& A, vec3& axis, float angle);
 
         //Returns a pointer to the first element of the internal array
         float* data();
@@ -113,9 +113,18 @@ namespace lnal
 
     //Will need to implement these features but might want to make these methods of mat4 class instead of standalone fuctions
     void translate_relative(mat4& A, const vec3& vec);
+    
     void translate_absolute(mat4& A, const vec3& vec);
+    
     void scale(mat4& A, const vec3& vec);
-    void rotate(mat4& A, const vec3& axis, float angle);
+    
+    void rotation_matrix(mat4& A, vec3& axis, float angle);
+    
+    //Rotates matrix A around the given axis by the specified angle in radians
+    //@param A matrix to rotate
+    //@param axis arbitrary axis to rotate around
+    //@param angle angle to rotate in radians
+    void rotate(mat4& A, vec3& axis, float angle);
 
     void gen_perspective_proj(mat4& A, float fovx, float aspect_ratio, float near, float far);
     void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far);

@@ -1,5 +1,3 @@
-#include "../src/api/window.h"
-
 #include <iostream>
 #include "../src/math/lnal.h"
 
@@ -49,9 +47,9 @@ int main(int argv, char** args)
 
     //Will want to wrap this in a engine object or something like that.
     //Renderer object will contain all rendering code
-    window win("Test", 1920, 1080);
+    //window win("Test", 1920, 1080);
 
-    while(!win.should_close())
+    /*while(!win.should_close())
     {
 
         //Engine loop:
@@ -67,7 +65,7 @@ int main(int argv, char** args)
         win.clear();
 
         win.swap_buffer();
-    }
+    }*/
 }
 
 
