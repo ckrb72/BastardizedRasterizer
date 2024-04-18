@@ -180,7 +180,7 @@ int main()
         char* buffer = new char[length];
         glGetShaderInfoLog(v_shader_source, length,nullptr, buffer);
         std::cout << buffer << std::endl;
-        delete buffer;
+        delete[] buffer;
     }
 
     unsigned int f_shader_source = glCreateShader(GL_FRAGMENT_SHADER);
@@ -195,7 +195,7 @@ int main()
         char* buffer = new char[length];
         glGetShaderInfoLog(f_shader_source, length,nullptr, buffer);
         std::cout << buffer << std::endl;
-        delete buffer;
+        delete[] buffer;
     }
 
     unsigned int program = glCreateProgram();
@@ -211,7 +211,7 @@ int main()
         char* buffer = new char[length];
         glGetProgramInfoLog(program, length, nullptr, buffer);
         std::cout << buffer << std::endl;
-        delete buffer;
+        delete[] buffer;
     }
 
     glDetachShader(program ,v_shader_source);
