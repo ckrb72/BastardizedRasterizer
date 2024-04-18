@@ -37,6 +37,8 @@ const char* fragment_shader_source = "#version 330 core\n"
 - Textures
 */
 
+bool wireframe = false;
+
 void mouse_motion(void* save_data)
 {
     std::cout << "Motion" << std::endl;
@@ -44,7 +46,16 @@ void mouse_motion(void* save_data)
 
 void mouse_button(void* save_data)
 {
-    std::cout << "Mouse button" << std::endl;
+    if(!wireframe)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        wireframe = true;
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        wireframe = false;
+    }
 }
 
 void keydown(void* save_data)
@@ -69,7 +80,7 @@ int main()
     reader_config.triangulate = true;
 
     //Read OBJ in
-    if(!reader.ParseFromFile("./ico-sphere.obj", reader_config))
+    if(!reader.ParseFromFile("./utah_teapot.obj", reader_config))
     {
         if(!reader.Error().empty())
         {
@@ -88,7 +99,9 @@ int main()
     auto& shapes = reader.GetShapes();
     auto& materials = reader.GetMaterials();
 
-    std::vector<float> shape_vertices(shapes[0].mesh.indices.size());
+    std::vector<float> shape_vertices{};
+
+    size_t num_vertices = 0;
 
     for(size_t s = 0; s < shapes.size(); s++)
     {
@@ -96,18 +109,27 @@ int main()
         for(int i = 0; i < mesh.indices.size(); i++)
         {
             tinyobj::index_t index = mesh.indices[i];
+
+            //Positions
             shape_vertices.push_back(attrib.vertices[index.vertex_index * 3]);
-            shape_vertices.push_back(attrib.vertices[index.vertex_index * 3 + 1]);
-            shape_vertices.push_back(attrib.vertices[index.vertex_index * 3 + 2]);
+            shape_vertices.push_back(attrib.vertices[(index.vertex_index * 3) + 1]);
+            shape_vertices.push_back(attrib.vertices[(index.vertex_index * 3) + 2]);
+            
+            //Normals
+            //Need if statement here because some might not have normals
+            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3)]);
+            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 1]);
+            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 2]);
+
+            num_vertices++;
         }
     }
 
-    std::cout << shape_vertices.size() * sizeof(float) << std::endl;
 
     //Init Stage of Engine
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    SDL_Window* window = SDL_CreateWindow("Cube Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1920, 1080, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("Cube Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
     assert(window != nullptr);
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -232,9 +254,13 @@ int main()
 
     bool quit = false;
     lnal::mat4 model(1.0);
+    lnal::vec3 s_factor(0.5, 0.5, 0.5);
+    lnal::scale(model, s_factor);
+    lnal::vec3 translate(0.0, -1.0, 0.0);
+    lnal::translate_relative(model, translate);
 
     lnal::mat4 rotation;
-    lnal::vec3 axis(0.0, 0.0, 1.0);
+    lnal::vec3 axis(0.0, -1.0, 0.0);
     lnal::rotation_matrix(rotation, axis, PI / 1000);
 
     float x = 0.0;
@@ -257,7 +283,7 @@ int main()
                 
                 case SDL_MOUSEBUTTONDOWN:
                     if(mouse_button_callback)
-                        //mouse_button_callback((void*)0);
+                        mouse_button_callback((void*)0);
 
                 case SDL_KEYDOWN:
                     if(keydown_callback)
@@ -272,7 +298,7 @@ int main()
         x += 0.001;
 
         lnal::mat4 view(1.0);
-        lnal::lookat(view, lnal::vec3(x, 0.0, 3.0), lnal::vec3(0.0, 0.0, 0.0), lnal::vec3(0.0, 1.0, 0.0));
+        lnal::lookat(view, lnal::vec3(0.0, 0.0, 3.0), lnal::vec3(0.0, 0.0, 0.0), lnal::vec3(0.0, 1.0, 0.0));
 
 
         glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, model.data());
@@ -284,13 +310,18 @@ int main()
 
         glBindVertexArray(vao);
         //glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
-        glDrawArrays(GL_TRIANGLES, 0, shape_vertices.size());
+        glDrawArrays(GL_TRIANGLES, 0, num_vertices);
         SDL_GL_SwapWindow(window);
     }
 
-
     //Cleanup
-    SDL_GL_DeleteContext(window);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+    glDeleteVertexArrays(1, &vao);
+    glDeleteProgram(program);
+
+    //SDL_GL_DeleteContext(window);
     SDL_DestroyWindow(window);
     SDL_Quit();
 
