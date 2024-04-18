@@ -13,13 +13,17 @@
 #include <cassert>
 #include <cmath>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
 const char* vertex_shader_source = "#version 330 core\n"
 "layout(location = 0) in vec3 a_pos;\n"
 "uniform mat4 projection;\n"
 "uniform mat4 model;\n"
+"uniform mat4 view;\n"
 "void main()\n"
 "{\n"
-"gl_Position = projection * model * vec4(a_pos, 1.0);\n"
+"gl_Position = projection * view * model * vec4(a_pos, 1.0);\n"
 "}\n\0";
 
 const char* fragment_shader_source = "#version 330 core\n"
@@ -30,13 +34,75 @@ const char* fragment_shader_source = "#version 330 core\n"
 "}\n\0";
 
 /*
-- 3D
-- Rotations
 - Textures
 */
 
+void mouse_motion(void* save_data)
+{
+    std::cout << "Motion" << std::endl;
+}
+
+void mouse_button(void* save_data)
+{
+    std::cout << "Mouse button" << std::endl;
+}
+
+void keydown(void* save_data)
+{
+    std::cout << "KeyDown" << std::endl;
+}
+
+//Need to pass in void* or void** (possibly to a struct) that would allow the user to access data that persists across the function calls
+//This way the user can actually do stuff with the data that they modify
+static void (*mouse_callback)(void* save_data) = mouse_motion;
+static void (*mouse_button_callback)(void* save_data) = mouse_button;
+static void (*keydown_callback)(void* save_data) = keydown;
+
 int main()
 {
+
+    //Load OBJ model
+
+    tinyobj::ObjReader reader;
+    tinyobj::ObjReaderConfig reader_config;
+    reader_config.mtl_search_path = "./";
+    reader_config.triangulate = true;
+
+    //Read OBJ in
+    if(!reader.ParseFromFile("./ico-sphere.obj", reader_config))
+    {
+        if(!reader.Error().empty())
+        {
+            std::cerr << reader.Error();
+        }
+
+        exit(1);
+    }
+
+    if(!reader.Warning().empty())
+    {
+        std::cout << reader.Warning();
+    }
+
+    auto& attrib = reader.GetAttrib();
+    auto& shapes = reader.GetShapes();
+    auto& materials = reader.GetMaterials();
+
+    std::vector<float> shape_vertices(shapes[0].mesh.indices.size());
+
+    for(size_t s = 0; s < shapes.size(); s++)
+    {
+        const tinyobj::mesh_t &mesh = shapes[s].mesh;
+        for(int i = 0; i < mesh.indices.size(); i++)
+        {
+            tinyobj::index_t index = mesh.indices[i];
+            shape_vertices.push_back(attrib.vertices[index.vertex_index * 3]);
+            shape_vertices.push_back(attrib.vertices[index.vertex_index * 3 + 1]);
+            shape_vertices.push_back(attrib.vertices[index.vertex_index * 3 + 2]);
+        }
+    }
+
+    std::cout << shape_vertices.size() * sizeof(float) << std::endl;
 
     //Init Stage of Engine
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -60,10 +126,15 @@ int main()
 
     float vertices[] = 
     {
-        -0.5, -0.5, -1.0,
-        0.5, -0.5, -1.0,
-        0.5, 0.5, -1.0,
-        -0.5, 0.5, -1.0
+        -0.5, -0.5, 0.0,
+        0.5, -0.5, 0.0,
+        0.5, 0.5, 0.0,
+        -0.5, 0.5, 0.0,
+
+        //-0.5, -0.5, -2.0,
+        //0.5, -0.5, -2.0,
+        //0.5, 0.5, -2.0,
+        //-0.5, 0.5, -2.0
     };
 
     unsigned int indices[] = 
@@ -75,22 +146,22 @@ int main()
     uint32_t vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+    //glGenBuffers(1, &ebo);
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shape_vertices.size(), shape_vertices.data(), GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
     //Error checking variables
@@ -166,6 +237,8 @@ int main()
     lnal::vec3 axis(0.0, 0.0, 1.0);
     lnal::rotation_matrix(rotation, axis, PI / 1000);
 
+    float x = 0.0;
+
     //Main Loop of engine
     while(!quit)
     {
@@ -177,6 +250,18 @@ int main()
                 case SDL_QUIT:
                     quit = true;
                     break;
+                case SDL_MOUSEMOTION:
+                    if(mouse_callback)
+                        //mouse_callback((void*)0);
+                    break;
+                
+                case SDL_MOUSEBUTTONDOWN:
+                    if(mouse_button_callback)
+                        //mouse_button_callback((void*)0);
+
+                case SDL_KEYDOWN:
+                    if(keydown_callback)
+                        //keydown_callback((void*)0);
                 default: 
                     break;
             }
@@ -184,14 +269,22 @@ int main()
 
         model = rotation * model;
 
+        x += 0.001;
+
+        lnal::mat4 view(1.0);
+        lnal::lookat(view, lnal::vec3(x, 0.0, 3.0), lnal::vec3(0.0, 0.0, 0.0), lnal::vec3(0.0, 1.0, 0.0));
+
+
         glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, model.data());
+
+        glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, view.data());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.3, 0.3, 0.3, 1.0);
 
         glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
-
+        //glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
+        glDrawArrays(GL_TRIANGLES, 0, shape_vertices.size());
         SDL_GL_SwapWindow(window);
     }
 
