@@ -282,25 +282,25 @@ namespace lnal
     //@param far far clipping plane
     void gen_orthographic_proj(mat4& A, float left, float right, float bottom, float top, float near, float far)
     {
-       /* A.m_data[0][0] = 
-        A.m_data[0][1] = 
-        A.m_data[0][2] = 
-        A.m_data[0][3] = 
+        A.m_data[0][0] = 2 / (right - left);
+        A.m_data[0][1] = 0;
+        A.m_data[0][2] = 0;
+        A.m_data[0][3] = 0;
 
-        A.m_data[1][0] = 
-        A.m_data[1][1] = 
-        A.m_data[1][2] = 
-        A.m_data[1][3] = 
+        A.m_data[1][0] = 0;
+        A.m_data[1][1] = 2 / (top - bottom);
+        A.m_data[1][2] = 0;
+        A.m_data[1][3] = 0;
 
-        A.m_data[2][0] = 
-        A.m_data[2][1] = 
-        A.m_data[2][2] = 
-        A.m_data[2][3] = 
+        A.m_data[2][0] = 0;
+        A.m_data[2][1] = 0;
+        A.m_data[2][2] = -2 / (far - near);
+        A.m_data[2][3] = 0;
 
-        A.m_data[3][0] = 
-        A.m_data[3][1] = 
-        A.m_data[3][2] = 
-        A.m_data[3][3] = */
+        A.m_data[3][0] = -(right + left) / (right - left);
+        A.m_data[3][1] = -(top + bottom) / (top - bottom);
+        A.m_data[3][2] = -(far + near) / (far - near);
+        A.m_data[3][3] = 1;
     }
 
     //Generates the view matrix given a specified orientation

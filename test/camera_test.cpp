@@ -17,6 +17,7 @@
 #include <tiny_obj_loader.h>
 
 #include "../src/api/Mesh.h"
+#include "../src/api/Camera.h"
 
 const char* vertex_shader_source = "#version 330 core\n"
 "layout(location = 0) in vec3 a_pos;\n"
@@ -106,8 +107,6 @@ int main()
     size_t num_vertices = 0;
 
 
-    Mesh m("./utah_teapot.obj");
-
     for(size_t s = 0; s < shapes.size(); s++)
     {
         const tinyobj::mesh_t &mesh = shapes[s].mesh;
@@ -151,25 +150,6 @@ int main()
 
     //OpenGL stuff now
 
-    float vertices[] = 
-    {
-        -0.5, -0.5, 0.0,
-        0.5, -0.5, 0.0,
-        0.5, 0.5, 0.0,
-        -0.5, 0.5, 0.0,
-
-        //-0.5, -0.5, -2.0,
-        //0.5, -0.5, -2.0,
-        //0.5, 0.5, -2.0,
-        //-0.5, 0.5, -2.0
-    };
-
-    unsigned int indices[] = 
-    {
-        0, 1, 2,
-        2, 3, 0
-    };
-
     uint32_t vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
@@ -190,6 +170,8 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+
+    //Shader stuff
 
     //Error checking variables
     char buffer[255];
@@ -249,11 +231,14 @@ int main()
 
     glUseProgram(program);
 
-    lnal::mat4 projection;
 
-    lnal::gen_perspective_proj(projection, PI / 2, (float)(1920.0f/1080.0f), 0.1, 10.0);
 
-    glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, projection.data());
+    //Create Camera for Scene
+    Camera cam{};
+
+    cam.gen_perspective(PI / 2, (float)(1920.0f / 1080.0f), 0.1, 10.0);
+
+    glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_FALSE, cam.get_projection());
 
     //End of OpenGL stuff
 
@@ -302,13 +287,12 @@ int main()
 
         x += 0.001;
 
-        lnal::mat4 view(1.0);
-        lnal::lookat(view, lnal::vec3(0.0, 0.0, 3.0), lnal::vec3(0.0, 0.0, 0.0), lnal::vec3(0.0, 1.0, 0.0));
+        cam.look_at(lnal::vec3(0.0, 0.0, 3.0), lnal::vec3(0.0, 0.0, 0.0), lnal::vec3(0.0, 1.0, 0.0));
 
 
         glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_FALSE, model.data());
 
-        glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, view.data());
+        glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_FALSE, cam.get_view());
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.3, 0.3, 0.3, 1.0);
