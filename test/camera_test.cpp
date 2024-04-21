@@ -122,9 +122,19 @@ int main()
             
             //Normals
             //Need if statement here because some might not have normals
-            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3)]);
-            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 1]);
-            //shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 2]);
+
+            /*if(index.vertex_index >= 0)
+            {
+                shape_vertices.push_back(attrib.normals[(index.normal_index * 3)]);
+                shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 1]);
+                shape_vertices.push_back(attrib.normals[(index.normal_index * 3) + 2]);
+            }
+
+            if(index.texcoord_index >= 0)
+            {
+                shape_vertices.push_back(attrib.texcoords[(2 * index.texcoord_index)]);
+                shape_vertices.push_back(attrib.texcoords[(2 * index.texcoord_index) + 1]);
+            }*/
 
             num_vertices++;
         }
@@ -154,6 +164,9 @@ int main()
         std::cout << "Failed to load" << std::endl;
         return -1;
     }
+
+    Mesh m{};
+    m.load_model("./assets/model/ico-sphere.obj", MESH_ALL);
 
     float vertices[] = 
     {
