@@ -73,7 +73,9 @@ void Texture::gen_texture_gpu(const unsigned char* texture, uint32_t width, uint
 
 }
 
-void Texture::bind()
+//Bind the texture to the given texture unit
+void Texture::bind(uint32_t unit)
 {
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, m_texture);
 }

@@ -21,6 +21,6 @@ public:
 
     bool load_texture(const std::string& filepath);
 
-    void bind();
+    void bind(uint32_t unit);
 
 };
