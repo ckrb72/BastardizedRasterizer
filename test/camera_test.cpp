@@ -18,6 +18,7 @@
 
 #include "../src/api/Mesh.h"
 #include "../src/api/Camera.h"
+#include "../src/api/Texture.h"
 
 const char* vertex_shader_source = "#version 330 core\n"
 "layout(location = 0) in vec3 a_pos;\n"
@@ -74,7 +75,6 @@ static void (*keydown_callback)(void* save_data) = keydown;
 
 int main()
 {
-
     //Load OBJ model
 
     tinyobj::ObjReader reader;
@@ -83,7 +83,7 @@ int main()
     reader_config.triangulate = true;
 
     //Read OBJ in
-    if(!reader.ParseFromFile("./utah_teapot.obj", reader_config))
+    if(!reader.ParseFromFile("./assets/model/utah_teapot.obj", reader_config))
     {
         if(!reader.Error().empty())
         {
@@ -130,6 +130,7 @@ int main()
     }
 
 
+
     //Init Stage of Engine
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -145,6 +146,13 @@ int main()
     #ifndef __APPLE__
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
     #endif
+
+    Texture t{};
+    if(!t.load_texture("./assets/img/container.jpg"))
+    {
+        std::cout << "Failed to load" << std::endl;
+        return -1;
+    }
 
     //End of init stage for now
 
