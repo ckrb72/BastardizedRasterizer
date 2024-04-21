@@ -1,10 +1,6 @@
 #include <iostream>
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#else
-#include <glad/glad.h>
-#endif
+#include <graphics.h>
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
@@ -34,10 +30,6 @@ const char* fragment_shader_source = "#version 330 core\n"
 "{\n"
 "color = vec4(0.5, 0.3, 0.5, 1.0);\n"
 "}\n\0";
-
-/*
-- Textures
-*/
 
 bool wireframe = false;
 
@@ -105,8 +97,6 @@ int main()
 
     size_t num_vertices = 0;
 
-
-    Mesh m("./utah_teapot.obj");
 
     for(size_t s = 0; s < shapes.size(); s++)
     {

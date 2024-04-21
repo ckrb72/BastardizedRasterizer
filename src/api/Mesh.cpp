@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <tiny_obj_loader.h>
-#include <glad/glad.h>
+#include <graphics.h>
 
 
 Mesh::Mesh()

@@ -6,7 +6,9 @@
 
 #include <iostream>
 
-#include <glad/glad.h>
+#include <graphics.h>
+
+
 #include "../debug.h"
 
 

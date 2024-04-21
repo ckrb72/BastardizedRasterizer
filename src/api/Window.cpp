@@ -1,6 +1,6 @@
 #include "Window.h"
 
-#include <glad/glad.h>
+#include <graphics.h>
 #include <cassert>
 
 Window::Window()

@@ -1,8 +1,7 @@
 #include "debug.h"
 
+#include <graphics.h>
 #include <iostream>
-#include <glad/glad.h>
-
 void glCheckError_(const char* file, int line)
 {
     GLenum error;

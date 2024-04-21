@@ -8,7 +8,7 @@
 ## Roadmap -
 
 - [ ] OpenGL API abstraction
-- [ ] Math Library
+- [x] Math Library
 - [ ] Shaders
 - [ ] Textures
 - [ ] Final Model Loading

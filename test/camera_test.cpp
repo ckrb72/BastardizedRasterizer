@@ -1,10 +1,6 @@
 #include <iostream>
 
-#ifdef __APPLE__
-#include <OpenGL/gl3.h>
-#else
-#include <glad/glad.h>
-#endif
+#include <graphics.h>
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
