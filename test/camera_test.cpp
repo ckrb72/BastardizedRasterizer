@@ -22,24 +22,25 @@
 
 const char* vertex_shader_source = "#version 330 core\n"
 "layout(location = 0) in vec3 a_pos;\n"
+"layout(location = 1) in vec2 a_texCoord;\n"
+"out vec2 texCoords;"
 "uniform mat4 projection;\n"
 "uniform mat4 model;\n"
 "uniform mat4 view;\n"
 "void main()\n"
 "{\n"
 "gl_Position = projection * view * model * vec4(a_pos, 1.0);\n"
+"texCoords = a_texCoord;\n"
 "}\n\0";
 
 const char* fragment_shader_source = "#version 330 core\n"
+"in vec2 texCoords;\n"
 "out vec4 color;\n"
+"uniform sampler2D containerTexture;\n"
 "void main()\n"
 "{\n"
-"color = vec4(0.5, 0.3, 0.5, 1.0);\n"
+"color = texture(containerTexture, texCoords);\n"
 "}\n\0";
-
-/*
-- Textures
-*/
 
 bool wireframe = false;
 
@@ -154,6 +155,20 @@ int main()
         return -1;
     }
 
+    float vertices[] = 
+    {
+        -0.5, -0.5, 0.0,    0.0, 0.0,
+        0.5, -0.5, 0.0,     1.0, 0.0,
+        0.5, 0.5, 0.0,      1.0, 1.0,
+        -0.5, 0.5, 0.0,     0.0, 1.0
+    };
+
+    unsigned int indices[] = 
+    {
+        0, 1, 2,
+        2, 3, 0
+    };
+
     //End of init stage for now
 
     //OpenGL stuff now
@@ -161,22 +176,26 @@ int main()
     uint32_t vao, vbo, ebo;
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    //glGenBuffers(1, &ebo);
+    glGenBuffers(1, &ebo);
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shape_vertices.size(), shape_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shape_vertices.size(), shape_vertices.data(), GL_STATIC_DRAW);
 
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
     //Shader stuff
@@ -253,9 +272,9 @@ int main()
     bool quit = false;
     lnal::mat4 model(1.0);
     lnal::vec3 s_factor(0.5, 0.5, 0.5);
-    lnal::scale(model, s_factor);
+    //lnal::scale(model, s_factor);
     lnal::vec3 translate(0.0, -1.0, 0.0);
-    lnal::translate_relative(model, translate);
+    //lnal::translate_relative(model, translate);
 
     lnal::mat4 rotation;
     lnal::vec3 axis(0.0, -1.0, 0.0);
@@ -305,9 +324,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0.3, 0.3, 0.3, 1.0);
 
+        t.bind(0);
+
+
         glBindVertexArray(vao);
-        //glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
-        glDrawArrays(GL_TRIANGLES, 0, num_vertices);
+        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, nullptr);
+        //glDrawArrays(GL_TRIANGLES, 0, num_vertices);
         SDL_GL_SwapWindow(window);
     }
 
